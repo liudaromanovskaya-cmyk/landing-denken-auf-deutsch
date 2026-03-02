@@ -1045,6 +1045,8 @@
       .offer-main { grid-template-columns: 1fr; gap: 32px; }
       .offer-formats { grid-template-columns: 1fr; }
       .nav { display: none; }
+      /* Mobile spacing tweaks */
+      .back-to-top { bottom: 20px; right: 16px; }
     }
     @media (max-width: 680px) {
       section { padding: 64px 0; }
@@ -1115,12 +1117,291 @@
     .pain-card:hover {
       transform: translateY(-2px);
     }
+
+    /* ══════════════════════════════════════════════════
+       BACK TO TOP
+    ══════════════════════════════════════════════════ */
+    .back-to-top {
+      position: fixed; bottom: 28px; right: 24px; z-index: 1001;
+      width: 48px; height: 48px;
+      background: rgba(12,26,18,0.92);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-gold);
+      border-radius: 12px;
+      color: var(--gold-warm);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: translateY(16px) scale(0.9);
+      transition: opacity 0.35s var(--ease-organic), transform 0.35s var(--ease-organic), background 0.2s, box-shadow 0.2s;
+      pointer-events: none;
+    }
+    .back-to-top.visible {
+      opacity: 1; transform: translateY(0) scale(1); pointer-events: all;
+    }
+    .back-to-top:hover {
+      background: rgba(200,149,90,0.18);
+      box-shadow: 0 8px 28px rgba(200,149,90,0.25);
+    }
+    .back-to-top svg { pointer-events: none; }
+
+    /* ══════════════════════════════════════════════════
+       MOBILE HEADER & HAMBURGER
+    ══════════════════════════════════════════════════ */
+    .mobile-header {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1002;
+      padding: 14px 20px;
+      background: rgba(12,26,18,0.96);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      align-items: center; justify-content: space-between;
+    }
+    .mobile-logo {
+      font-family: var(--font-display);
+      font-size: 17px; font-weight: 300; font-style: italic;
+      color: var(--text-primary); text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .mobile-logo span { color: var(--gold-warm); }
+    .burger {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      border-radius: 8px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      padding: 0; flex-shrink: 0;
+    }
+    .burger span {
+      display: block; width: 20px; height: 1.5px;
+      background: var(--text-primary);
+      border-radius: 2px;
+      transition: transform 0.35s var(--ease-organic), opacity 0.25s, width 0.3s;
+    }
+    .burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; width: 0; }
+    .burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* Mobile nav drawer */
+    .mobile-nav-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 1003;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(3px);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .mobile-nav-overlay.active { opacity: 1; }
+    .mobile-nav {
+      position: fixed; top: 0; right: 0; z-index: 1004;
+      width: min(300px, 84vw); height: 100dvh;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border-gold);
+      padding: 72px 24px 40px;
+      display: flex; flex-direction: column; gap: 4px;
+      transform: translateX(110%);
+      transition: transform 0.42s var(--ease-organic);
+      overflow-y: auto;
+    }
+    .mobile-nav.active { transform: translateX(0); }
+    .mobile-nav-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      border-radius: 8px; cursor: pointer;
+      color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.2s, background 0.2s;
+    }
+    .mobile-nav-close:hover { color: var(--text-primary); background: rgba(255,255,255,0.1); }
+    .mobile-nav-label {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-muted); padding: 0 12px;
+      margin-bottom: 8px;
+    }
+    .mobile-nav a {
+      font-size: 16px; font-weight: 500;
+      color: var(--text-secondary); text-decoration: none;
+      padding: 13px 14px; border-radius: 10px;
+      display: block;
+      transition: color 0.2s, background 0.2s, transform 0.2s;
+    }
+    .mobile-nav a:hover { color: var(--gold-warm); background: rgba(200,149,90,0.08); transform: translateX(4px); }
+    .mobile-nav-divider { height: 1px; background: var(--divider); margin: 12px 0; }
+    .mobile-nav-cta-wrap { margin-top: auto; padding-top: 16px; }
+    .mobile-nav-cta {
+      display: block; text-align: center;
+      background: linear-gradient(135deg, var(--gold-warm), var(--gold-bright)) !important;
+      color: #0B1209 !important;
+      font-weight: 700 !important; font-size: 14px !important;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 16px 24px !important; border-radius: 8px;
+      text-decoration: none;
+    }
+
+    @media (max-width: 960px) {
+      .mobile-header { display: flex; }
+      .mobile-nav-overlay { display: block; }
+      .hero { padding-top: 136px !important; }
+    }
+
+    /* ══════════════════════════════════════════════════
+       CONTACT FORM SECTION
+    ══════════════════════════════════════════════════ */
+    .contact-section { background: var(--bg-section-alt); }
+    .contact-wrap {
+      max-width: 660px; margin: 0 auto;
+      position: relative;
+    }
+    .contact-form {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px 44px;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .form-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 0;
+    }
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 8px;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 13px 16px;
+      font-family: var(--font-body);
+      font-size: 15px; color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.2s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .form-input::placeholder { color: var(--text-muted); font-size: 14px; }
+    .form-input:focus {
+      border-color: var(--gold-warm);
+      box-shadow: 0 0 0 3px rgba(200,149,90,0.14);
+      background: rgba(200,149,90,0.03);
+    }
+    .form-input.error { border-color: #c0504a; box-shadow: 0 0 0 3px rgba(192,80,74,0.12); }
+    .form-textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+    .form-actions {
+      display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .form-note { font-size: 12px; color: var(--text-muted); letter-spacing: 0.03em; }
+
+    /* Submit button loading state */
+    .form-submit-btn { position: relative; display: inline-flex; align-items: center; gap: 10px; }
+    .form-submit-btn.loading { pointer-events: none; opacity: 0.75; }
+    .btn-spinner {
+      display: none;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(11,18,9,0.25); border-top-color: #0B1209;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+    }
+    .form-submit-btn.loading .btn-spinner { display: block; }
+    .form-submit-btn.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Success state */
+    .form-success {
+      display: none;
+      flex-direction: column; align-items: center; text-align: center;
+      padding: 56px 40px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius);
+    }
+    .form-success.show {
+      display: flex;
+      animation: success-enter 0.55s var(--ease-spring) forwards;
+    }
+    @keyframes success-enter {
+      from { opacity: 0; transform: scale(0.93) translateY(16px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .success-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--gold-warm), var(--gold-bright));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+      animation: pop-icon 0.5s var(--ease-spring) 0.1s both;
+    }
+    @keyframes pop-icon {
+      from { transform: scale(0); } to { transform: scale(1); }
+    }
+    .success-check {
+      stroke-dasharray: 40; stroke-dashoffset: 40;
+      animation: draw-check 0.45s ease 0.45s forwards;
+    }
+    @keyframes draw-check { to { stroke-dashoffset: 0; } }
+    .success-title {
+      font-family: var(--font-display);
+      font-size: 30px; font-weight: 300;
+      color: var(--text-primary); margin-bottom: 12px;
+    }
+    .success-text {
+      font-size: 15px; color: var(--text-secondary);
+      line-height: 1.7; margin-bottom: 24px;
+    }
+
+    @media (max-width: 680px) {
+      .contact-form { padding: 28px 20px; }
+      .form-row { grid-template-columns: 1fr; gap: 0; }
+    }
   </style>
 </head>
 <body>
 
 <!-- Cursor glow overlay -->
 <div id="cursor-glow" aria-hidden="true"></div>
+
+<!-- Back to top -->
+<button class="back-to-top" id="backToTop" aria-label="Вернуться наверх">
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <path d="M10 15V5M4 11l6-6 6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
+
+<!-- Mobile header -->
+<header class="mobile-header" id="mobileHeader">
+  <a href="#hero" class="mobile-logo">Думать <span>по-немецки</span></a>
+  <button class="burger" id="burgerBtn" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobileNav">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- Mobile nav overlay -->
+<div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true"></div>
+
+<!-- Mobile nav drawer -->
+<nav class="mobile-nav" id="mobileNav" aria-label="Мобильное меню">
+  <button class="mobile-nav-close" id="mobileNavClose" aria-label="Закрыть меню">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <span class="mobile-nav-label">Навигация</span>
+  <a href="#about">Обо мне</a>
+  <a href="#testimonials">Отзывы студентов</a>
+  <a href="#how">Как это работает</a>
+  <a href="#offer">Диагностика</a>
+  <a href="#faq">Вопросы</a>
+  <a href="#contact">Написать мне</a>
+  <div class="mobile-nav-divider"></div>
+  <div class="mobile-nav-cta-wrap">
+    <a href="https://t.me/mila_konstanz" class="mobile-nav-cta" target="_blank" rel="noopener noreferrer">
+      Записаться в Telegram →
+    </a>
+  </div>
+</nav>
 
 <!-- Scroll Progress Bar -->
 <div class="scroll-progress" aria-hidden="true"></div>
@@ -1798,6 +2079,66 @@
 </section>
 
 <!-- ══════════════════════════════════════════════════
+     12 CONTACT FORM
+══════════════════════════════════════════════════ -->
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="section-header centered">
+      <span class="section-label reveal">Написать мне</span>
+      <h2 class="section-title reveal reveal-delay-1">Остались вопросы?<br><em style="font-weight:300">Напишите — отвечу</em></h2>
+      <p class="section-lead reveal reveal-delay-2">Расскажите о своей ситуации — я подберу подходящий формат и отвечу в течение 24 часов</p>
+    </div>
+
+    <div class="contact-wrap reveal reveal-delay-2">
+      <!-- Form -->
+      <form class="contact-form" id="contactForm" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="formName">Имя</label>
+            <input class="form-input" type="text" id="formName" name="name"
+                   placeholder="Как вас зовут?" autocomplete="given-name" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="formEmail">Email</label>
+            <input class="form-input" type="email" id="formEmail" name="email"
+                   placeholder="your@email.com" autocomplete="email" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="formMessage">Сообщение</label>
+          <textarea class="form-input form-textarea" id="formMessage" name="message"
+                    placeholder="Расскажите о вашем уровне немецкого и цели..." rows="4" required></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary form-submit-btn" id="formSubmitBtn">
+            <span class="btn-spinner" aria-hidden="true"></span>
+            <span class="btn-text">Отправить сообщение</span>
+          </button>
+          <span class="form-note">Отвечаю в течение 24 часов</span>
+        </div>
+      </form>
+
+      <!-- Success state -->
+      <div class="form-success" id="formSuccess" role="status" aria-live="polite">
+        <div class="success-icon" aria-hidden="true">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+            <path class="success-check" d="M8 18l7 7 13-13"
+                  stroke="#0B1209" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3 class="success-title">Сообщение отправлено!</h3>
+        <p class="success-text">Мила свяжется с вами в течение 24 часов.<br>Можно также написать сразу напрямую:</p>
+        <a href="https://t.me/mila_konstanz" class="btn-primary"
+           target="_blank" rel="noopener noreferrer">
+          Открыть Telegram @mila_konstanz →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
      11 FOOTER
 ══════════════════════════════════════════════════ -->
 <footer>
@@ -2033,6 +2374,102 @@
       btn.addEventListener('mouseleave', () => {
         btn.style.transform = '';
       });
+    });
+  }
+
+  /* ──────────────────────────────────────────
+     BACK TO TOP
+  ────────────────────────────────────────── */
+  const backToTopBtn = document.getElementById('backToTop');
+  if (backToTopBtn) {
+    function updateBackToTop() {
+      backToTopBtn.classList.toggle('visible', window.scrollY > 480);
+    }
+    window.addEventListener('scroll', updateBackToTop, { passive: true });
+    backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  /* ──────────────────────────────────────────
+     MOBILE HAMBURGER MENU
+  ────────────────────────────────────────── */
+  const burgerBtn    = document.getElementById('burgerBtn');
+  const mobileNav    = document.getElementById('mobileNav');
+  const mobileOverlay = document.getElementById('mobileNavOverlay');
+  const mobileClose  = document.getElementById('mobileNavClose');
+
+  function openMobileMenu() {
+    burgerBtn.classList.add('open');
+    burgerBtn.setAttribute('aria-expanded', 'true');
+    mobileNav.classList.add('active');
+    mobileOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMobileMenu() {
+    burgerBtn.classList.remove('open');
+    burgerBtn.setAttribute('aria-expanded', 'false');
+    mobileNav.classList.remove('active');
+    mobileOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  if (burgerBtn) {
+    burgerBtn.addEventListener('click', () => {
+      mobileNav.classList.contains('active') ? closeMobileMenu() : openMobileMenu();
+    });
+    mobileOverlay.addEventListener('click', closeMobileMenu);
+    mobileClose.addEventListener('click', closeMobileMenu);
+    mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileMenu));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMobileMenu(); });
+  }
+
+  /* ──────────────────────────────────────────
+     CONTACT FORM — SUCCESS ANIMATION
+  ────────────────────────────────────────── */
+  const contactForm  = document.getElementById('contactForm');
+  const formSuccess  = document.getElementById('formSuccess');
+  const submitBtn    = document.getElementById('formSubmitBtn');
+
+  if (contactForm && formSuccess && submitBtn) {
+    // Validate single field
+    function validateField(input) {
+      const empty = !input.value.trim();
+      const badEmail = input.type === 'email' && input.value.trim() && !input.value.includes('@');
+      const invalid = empty || badEmail;
+      input.classList.toggle('error', invalid);
+      return !invalid;
+    }
+
+    // Live error clear
+    contactForm.querySelectorAll('.form-input').forEach(input => {
+      input.addEventListener('input', () => input.classList.remove('error'));
+    });
+
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Validate all required fields
+      let valid = true;
+      contactForm.querySelectorAll('[required]').forEach(input => {
+        if (!validateField(input)) valid = false;
+      });
+      if (!valid) return;
+
+      // Show loading state
+      submitBtn.classList.add('loading');
+
+      // Simulate sending (1.4 s delay)
+      setTimeout(() => {
+        // Fade out form
+        contactForm.style.opacity = '0';
+        contactForm.style.transform = 'scale(0.96)';
+        setTimeout(() => {
+          contactForm.style.display = 'none';
+          formSuccess.classList.add('show');
+          formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 280);
+      }, 1400);
     });
   }
 
