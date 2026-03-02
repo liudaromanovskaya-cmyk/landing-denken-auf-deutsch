@@ -3,536 +3,1335 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Тренажёр «Думать по-немецки»</title>
+  <title>Немецкий без паузы — Наставник Мила, Германия | @mila_konstanz</title>
+  <meta name="description" content="Онлайн-наставник по немецкому языку. Индивидуальный подход + AI-практика. Перестать переводить — начать думать по-немецки. Бесплатная диагностика 30 мин." />
+  <meta property="og:title" content="Думать по-немецки · Наставник Мила" />
+  <meta property="og:description" content="Индивидуальное наставничество + умная AI-практика. Для русскоязычных в DACH. A1–C2." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
+    /* ══════════════════════════════════════════════════
+       RESET & BASE
+    ══════════════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #0C1A12;
-      --bg-card: #152A1E;
-      --bg-card-hover: #1A3324;
-      --border: rgba(255,255,255,0.09);
-      --divider: rgba(255,255,255,0.07);
-      --text-primary: #F0EDE8;
-      --text-secondary: #9AAF9E;
-      --text-muted: #5E7A64;
-      --gold-light: #D8B46A;
-      --gold-dark: #B99248;
-      --cta-glow: rgba(216,180,106,0.20);
-      --font: system-ui, -apple-system, "Segoe UI", Inter, Roboto, Arial, sans-serif;
-    }
-
     html { scroll-behavior: smooth; }
 
+    /* ══════════════════════════════════════════════════
+       DESIGN TOKENS
+    ══════════════════════════════════════════════════ */
+    :root {
+      --bg:            #0C1A12;
+      --bg-card:       #152A1E;
+      --bg-card-hover: #1A3324;
+      --bg-warm:       #192C1F;
+      --bg-section-alt:#0F2017;
+
+      --text-primary:   #FAF7F2;
+      --text-secondary: #9AAF9E;
+      --text-muted:     #5E7A64;
+
+      --gold-warm:   #C8955A;
+      --gold-bright: #E8C47A;
+      --gold-dark:   #A07840;
+      --gold-glow:   rgba(200,149,90,0.20);
+
+      --amber:  #C97941;
+      --sage:   #6B9E7A;
+
+      --border:      rgba(255,255,255,0.08);
+      --border-gold: rgba(200,149,90,0.25);
+      --divider:     rgba(255,255,255,0.07);
+
+      --font-display: 'Cormorant Garamond', 'Georgia', serif;
+      --font-body:    'Inter', system-ui, sans-serif;
+
+      --ease-organic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+      --radius:       12px;
+      --container:    920px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       BODY & NOISE TEXTURE
+    ══════════════════════════════════════════════════ */
     body {
-      background-color: var(--bg);
+      background: var(--bg);
       color: var(--text-primary);
-      font-family: var(--font);
+      font-family: var(--font-body);
       font-size: 16px;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    /* ── Layout ── */
-    .container {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 24px;
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9998;
+      opacity: 0.032;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
     }
 
-    section { padding: 72px 0; }
+    /* ══════════════════════════════════════════════════
+       SCROLL PROGRESS BAR
+    ══════════════════════════════════════════════════ */
+    .scroll-progress {
+      position: fixed; top: 0; left: 0; z-index: 9999;
+      height: 2px; width: 0%;
+      background: linear-gradient(90deg, var(--gold-warm), var(--gold-bright));
+      transition: width 0.08s linear;
+    }
 
+    /* ══════════════════════════════════════════════════
+       FLOATING NAV
+    ══════════════════════════════════════════════════ */
+    .nav {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 1000;
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(12, 26, 18, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-gold);
+      border-radius: 100px;
+      padding: 8px 16px;
+      opacity: 0;
+      transition: opacity 0.4s var(--ease-organic);
+      pointer-events: none;
+    }
+    .nav.visible { opacity: 1; pointer-events: all; }
+    .nav a {
+      font-family: var(--font-body);
+      font-size: 12px; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 4px 10px;
+      border-radius: 100px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav a:hover { color: var(--gold-warm); background: rgba(200,149,90,0.08); }
+    .nav-dot {
+      width: 3px; height: 3px; border-radius: 50%;
+      background: var(--border-gold); flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════════════════ */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+    section { padding: 88px 0; }
     .divider {
       border: none;
       border-top: 1px solid var(--divider);
-      margin: 0;
     }
 
-    /* ── Hero ── */
-    .hero {
-      padding: 96px 0 80px;
-      text-align: center;
-    }
-
-    .hero__label {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--gold-light);
-      background: rgba(216,180,106,0.08);
-      border: 1px solid rgba(216,180,106,0.22);
-      border-radius: 100px;
-      padding: 6px 16px;
-      margin-bottom: 32px;
-    }
-
-    .hero__title {
-      font-size: clamp(36px, 7vw, 72px);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.08;
-      margin-bottom: 24px;
-    }
-
-    .gradient-text {
-      background: linear-gradient(135deg, #D8B46A 0%, #F5DFA0 45%, #B99248 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero__sub {
-      font-size: clamp(17px, 2.5vw, 20px);
-      color: var(--text-secondary);
-      max-width: 620px;
-      margin: 0 auto 16px;
-      font-weight: 400;
-    }
-
-    .hero__problem {
-      font-size: 15px;
-      color: var(--text-muted);
-      max-width: 540px;
-      margin: 0 auto 48px;
-      font-style: italic;
-      border-left: 2px solid rgba(216,180,106,0.30);
-      padding-left: 16px;
-      text-align: left;
-    }
-
-    /* ── CTA Button ── */
-    .cta-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .btn-cta {
-      display: inline-block;
-      position: relative;
-      background: linear-gradient(135deg, #D8B46A 0%, #B99248 100%);
-      color: #0B0F1A;
-      font-family: var(--font);
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      padding: 18px 48px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      text-decoration: none;
-      outline: none;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      animation: pulse-glow 3s ease-in-out infinite;
-    }
-
-    .btn-cta:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(216,180,106,0.32);
-      animation: none;
-    }
-
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 4px 24px var(--cta-glow); }
-      50%       { box-shadow: 0 8px 36px rgba(216,180,106,0.30); }
-    }
-
-    .cta-link {
-      font-size: 13px;
-      color: var(--text-muted);
-      text-decoration: none;
-      letter-spacing: 0.02em;
-      transition: color 0.2s;
-    }
-    .cta-link:hover { color: var(--gold-light); }
-
-    /* ── Cards ── */
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-
-    @media (max-width: 680px) {
-      .cards-grid { grid-template-columns: 1fr; }
-    }
-
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 28px 24px;
-      transition: border-color 0.25s ease, background 0.25s ease;
-    }
-
-    .card:hover {
-      border-color: rgba(216,180,106,0.22);
-      background: var(--bg-card-hover);
-    }
-
-    .card__icon {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 18px;
-      color: var(--gold-light);
-    }
-
-    .card__title {
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: var(--text-primary);
-      letter-spacing: -0.01em;
-    }
-
-    .card__text {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.6;
-    }
-
-    /* ── Section headings ── */
+    /* ══════════════════════════════════════════════════
+       TYPOGRAPHY HELPERS
+    ══════════════════════════════════════════════════ */
     .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--gold-light);
-      margin-bottom: 12px;
+      display: block;
+      font-family: var(--font-body);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--gold-warm);
+      margin-bottom: 14px;
     }
-
     .section-title {
-      font-size: clamp(26px, 4vw, 36px);
-      font-weight: 800;
-      letter-spacing: -0.025em;
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 300;
+      letter-spacing: 0.01em;
       line-height: 1.15;
+      color: var(--text-primary);
       margin-bottom: 16px;
     }
-
     .section-lead {
       font-size: 16px;
       color: var(--text-secondary);
       max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 48px;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--gold-warm) 0%, var(--gold-bright) 50%, var(--gold-warm) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ══════════════════════════════════════════════════
+       SCROLL REVEAL ANIMATIONS
+    ══════════════════════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.6s var(--ease-organic), transform 0.6s var(--ease-organic);
+    }
+    .reveal.from-left  { transform: translateX(-32px); }
+    .reveal.from-right { transform: translateX(32px); }
+    .reveal.scale-in   { transform: translateY(20px) scale(0.97); }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translate(0) scale(1);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ══════════════════════════════════════════════════
+       CTA BUTTON
+    ══════════════════════════════════════════════════ */
+    .btn-primary {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--gold-warm) 0%, var(--gold-bright) 50%, var(--gold-warm) 100%);
+      background-size: 200% 100%;
+      color: #0B1209;
+      font-family: var(--font-body);
+      font-size: 14px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 18px 44px;
+      border-radius: 6px;
+      border: none; cursor: pointer;
+      text-decoration: none;
+      animation: pulse-glow 3s ease-in-out infinite;
+      transition: transform 0.35s var(--ease-organic), box-shadow 0.35s var(--ease-organic), background-position 0.4s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(200,149,90,0.38);
+      background-position: 100% 0;
+      animation: none;
+    }
+    .btn-primary:active { transform: scale(0.97); }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 4px 24px rgba(200,149,90,0.22); }
+      50%       { box-shadow: 0 8px 40px rgba(200,149,90,0.38); }
+    }
+
+    .cta-note {
+      display: block;
+      font-size: 12px; color: var(--text-muted);
+      letter-spacing: 0.04em;
+      margin-top: 12px;
+    }
+    .cta-link {
+      font-size: 13px; color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .cta-link:hover { color: var(--gold-warm); }
+
+    /* ══════════════════════════════════════════════════
+       01 HERO
+    ══════════════════════════════════════════════════ */
+    .hero {
+      position: relative;
+      padding: 100px 0 80px;
+      overflow: hidden;
+    }
+
+    /* Ambient glow */
+    .hero-glow {
+      position: absolute; inset: 0;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .hero-glow::before {
+      content: '';
+      position: absolute; top: -15%; right: -8%;
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, rgba(200,149,90,0.12) 0%, transparent 70%);
+      border-radius: 50%; filter: blur(48px);
+      animation: drift-a 22s ease-in-out infinite alternate;
+    }
+    .hero-glow::after {
+      content: '';
+      position: absolute; bottom: -10%; left: -5%;
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(107,158,122,0.08) 0%, transparent 70%);
+      border-radius: 50%; filter: blur(64px);
+      animation: drift-b 28s ease-in-out infinite alternate;
+    }
+    @keyframes drift-a {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(-40px,28px) scale(1.1); }
+    }
+    @keyframes drift-b {
+      from { transform: translate(0,0) scale(1.05); }
+      to   { transform: translate(30px,-22px) scale(1); }
+    }
+
+    .hero-inner {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .hero__label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--gold-warm);
+      background: rgba(200,149,90,0.07);
+      border: 1px solid rgba(200,149,90,0.22);
+      border-radius: 100px;
+      padding: 6px 16px;
+      margin-bottom: 28px;
+    }
+    .hero__label-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--gold-warm);
+      animation: blink 2.5s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; } 50% { opacity: 0.3; }
+    }
+
+    .hero__title {
+      font-family: var(--font-display);
+      font-size: clamp(44px, 7vw, 80px);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      line-height: 1.08;
+      margin-bottom: 22px;
+    }
+
+    .hero__swap-wrap {
+      display: block;
+    }
+    .hero__swap {
+      display: inline-block;
+      position: relative;
+      transition: opacity 0.3s ease;
+    }
+
+    .hero__sub {
+      font-size: clamp(16px, 2.2vw, 18px);
+      color: var(--text-secondary);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      font-weight: 400;
+    }
+
+    .hero__quote {
+      position: relative;
+      font-size: 15px; font-style: italic;
+      color: var(--text-muted);
+      border-left: 2px solid rgba(200,149,90,0.35);
+      padding: 8px 0 8px 18px;
+      margin-bottom: 36px;
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    .hero__cred {
+      font-size: 12px; color: var(--text-muted);
+      letter-spacing: 0.04em;
+      margin-bottom: 36px;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .hero__cred-sep { opacity: 0.35; }
+
+    .hero__cta { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+
+    /* Photo placeholder */
+    .hero__photo-wrap {
+      position: relative;
+    }
+    .hero__photo {
+      width: 100%; aspect-ratio: 3/4;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border-gold);
+      box-shadow: 0 0 0 1px rgba(200,149,90,0.08), 0 32px 80px rgba(0,0,0,0.45);
+      position: relative;
+      background: linear-gradient(160deg, #1C3525 0%, #152A1E 40%, #0F1F16 100%);
+    }
+    .hero__photo-inner {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px;
+      padding: 32px;
+    }
+    .photo-silhouette {
+      width: 140px; opacity: 0.35;
+    }
+    .photo-placeholder-label {
+      font-family: var(--font-body);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold-warm); opacity: 0.5;
+      text-align: center;
+    }
+    .hero__photo-badge {
+      position: absolute; bottom: 20px; left: 20px;
+      background: rgba(12,26,18,0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-gold);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .badge-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #4CAF50;
+      box-shadow: 0 0 8px rgba(76,175,80,0.5);
+      flex-shrink: 0;
+    }
+    .badge-text {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text-primary);
+    }
+    .badge-sub {
+      font-size: 10px; color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    /* ══════════════════════════════════════════════════
+       02 TRUST BAR
+    ══════════════════════════════════════════════════ */
+    .trust-bar {
+      padding: 32px 0;
+      border-top: 1px solid var(--divider);
+      border-bottom: 1px solid var(--divider);
+    }
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .trust-item {
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+      padding: 8px 16px;
+      border-right: 1px solid var(--divider);
+    }
+    .trust-item:last-child { border-right: none; }
+    .trust-icon {
+      font-size: 22px; margin-bottom: 6px; opacity: 0.85;
+    }
+    .trust-number {
+      font-family: var(--font-display);
+      font-size: 36px; font-weight: 400;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--gold-warm), var(--gold-bright));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+    }
+    .trust-label {
+      font-size: 11px; color: var(--text-muted);
+      letter-spacing: 0.04em; line-height: 1.4;
+    }
+
+    /* ══════════════════════════════════════════════════
+       03 PAIN
+    ══════════════════════════════════════════════════ */
+    .pain-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
       margin-bottom: 40px;
     }
-
-    /* ── For whom ── */
-    .audience-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 0;
-    }
-
-    .audience-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
+    .pain-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 18px 20px;
+      border-left: 3px solid var(--gold-warm);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 22px 22px 22px 24px;
       font-size: 15px;
       color: var(--text-secondary);
-      transition: border-color 0.2s;
+      font-style: italic;
+      line-height: 1.6;
+      transition: border-color 0.25s, background 0.25s;
     }
-
-    .audience-list li:hover {
-      border-color: rgba(216,180,106,0.18);
+    .pain-card:hover {
+      border-color: rgba(200,149,90,0.4);
+      background: var(--bg-card-hover);
     }
-
-    .audience-list li strong {
+    .pain-bridge {
+      background: var(--bg-warm);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius);
+      padding: 32px 36px;
+      font-size: 17px;
       color: var(--text-primary);
-      font-weight: 600;
+      line-height: 1.75;
+    }
+    .pain-bridge strong { color: var(--gold-warm); font-weight: 600; }
+
+    /* ══════════════════════════════════════════════════
+       04 HOW IT WORKS
+    ══════════════════════════════════════════════════ */
+    .how-section { background: var(--bg-section-alt); }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .step-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 26px;
+      position: relative;
+      transition: border-color 0.25s, transform 0.35s var(--ease-organic), box-shadow 0.35s;
+    }
+    .step-card:hover {
+      border-color: var(--border-gold);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+    }
+    .step-number {
+      font-family: var(--font-display);
+      font-size: 64px; font-weight: 300;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--gold-warm), var(--gold-bright));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      opacity: 0.9;
+    }
+    .step-tag {
+      display: inline-block;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold-warm);
+      background: rgba(200,149,90,0.1);
+      border-radius: 100px;
+      padding: 3px 10px;
+      margin-bottom: 12px;
+    }
+    .step-title {
+      font-size: 15px; font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+    .step-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
     }
 
-    .list-icon {
+    .split-role {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .split-col {
+      padding: 28px 32px;
+    }
+    .split-col:first-child {
+      background: var(--bg-warm);
+      border-right: 1px solid var(--border-gold);
+    }
+    .split-col:last-child {
+      background: rgba(200,149,90,0.04);
+    }
+    .split-col-title {
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--gold-warm);
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .split-col-title svg { flex-shrink: 0; }
+    .split-list {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 9px;
+    }
+    .split-list li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 14px; color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .split-list li::before {
+      content: '·';
+      color: var(--gold-warm);
+      font-size: 18px;
+      line-height: 1.2;
       flex-shrink: 0;
-      width: 20px;
-      height: 20px;
-      margin-top: 1px;
-      color: var(--gold-light);
     }
 
-    /* ── Why beneficial ── */
-    .benefits-grid {
+    /* ══════════════════════════════════════════════════
+       05 ABOUT
+    ══════════════════════════════════════════════════ */
+    .about-inner {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 56px;
+      align-items: start;
+    }
+    .about__photo {
+      width: 100%;
+      aspect-ratio: 3/4;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border-gold);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      background: linear-gradient(160deg, #1C3525 0%, #152A1E 60%, #0F1F16 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px;
+      padding: 28px;
+    }
+    .about__photo svg { opacity: 0.3; }
+    .about__photo-label {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--gold-warm); opacity: 0.45; text-align: center;
+    }
+
+    .about__text-wrap {
+      background: var(--bg-warm);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px 44px;
+    }
+    .about__story {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+    .about__story p + p { margin-top: 16px; }
+    .about__story strong { color: var(--text-primary); font-weight: 600; }
+    .about__sig {
+      font-family: var(--font-display);
+      font-size: 28px; font-style: italic; font-weight: 300;
+      color: var(--gold-warm);
+      margin-bottom: 28px;
+    }
+    .about__badges {
+      display: flex; flex-wrap: wrap; gap: 10px;
+    }
+    .badge {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 7px 14px;
+      font-size: 12px; color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+    .badge-icon { font-size: 14px; }
+
+    /* ══════════════════════════════════════════════════
+       06 RESULTS
+    ══════════════════════════════════════════════════ */
+    .results-section { background: var(--bg-section-alt); }
+
+    .results-grid {
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .result-card {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .result-before, .result-after {
+      padding: 28px 30px;
+    }
+    .result-before {
+      background: var(--bg-card);
+    }
+    .result-after {
+      background: var(--bg-warm);
+      border-left: 3px solid var(--gold-warm);
+    }
+    .result-arrow {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 4px;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border-gold);
+    }
+    .result-arrow svg { color: var(--gold-warm); opacity: 0.7; }
+    .result-tag {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .result-before .result-tag { color: var(--text-muted); }
+    .result-after  .result-tag { color: var(--gold-warm); }
+    .result-text {
+      font-size: 15px; line-height: 1.6;
+    }
+    .result-before .result-text { color: var(--text-muted); font-style: italic; }
+    .result-after  .result-text { color: var(--text-primary); font-weight: 500; }
+    .result-attr {
+      margin-top: 14px;
+      font-size: 12px; color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    /* ══════════════════════════════════════════════════
+       07 TESTIMONIALS
+    ══════════════════════════════════════════════════ */
+    .testimonials-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 16px;
     }
-
-    @media (max-width: 560px) {
-      .benefits-grid { grid-template-columns: 1fr; }
-    }
-
-    .benefit-item {
-      background: var(--bg-card);
+    .testimonial-card {
+      position: relative;
+      background: rgba(255,255,255,0.025);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 20px;
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-      transition: border-color 0.2s;
+      border-left: 3px solid var(--gold-warm);
+      border-radius: var(--radius);
+      padding: 32px 28px 28px;
+      transition: border-color 0.25s, background 0.25s;
     }
-    .benefit-item:hover { border-color: rgba(216,180,106,0.18); }
-
-    .benefit-icon {
+    .testimonial-card:hover {
+      border-color: var(--border-gold);
+      border-left-color: var(--gold-bright);
+      background: rgba(200,149,90,0.03);
+    }
+    .testimonial-card.hero-t { grid-column: 1 / -1; }
+    .t-quote-mark {
+      font-family: var(--font-display);
+      font-size: 88px; font-weight: 300;
+      line-height: 0.7;
+      color: var(--gold-warm);
+      opacity: 0.45;
+      display: block;
+      margin-bottom: 10px;
+      user-select: none;
+    }
+    .t-text {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+    .t-footer {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .t-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold-warm));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 600;
+      color: #0B1209;
       flex-shrink: 0;
-      width: 20px;
-      height: 20px;
-      margin-top: 2px;
-      color: var(--gold-light);
+    }
+    .t-name {
+      font-size: 13px; font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .t-meta {
+      font-size: 11px; color: var(--text-muted);
+      letter-spacing: 0.03em;
     }
 
-    .benefit-title {
-      font-size: 14px;
-      font-weight: 700;
+    /* ══════════════════════════════════════════════════
+       08 OFFER
+    ══════════════════════════════════════════════════ */
+    .offer-section { background: var(--bg-section-alt); }
+
+    .offer-main {
+      border: 1px solid rgba(200,149,90,0.4);
+      border-radius: var(--radius);
+      padding: 48px 52px;
+      background: linear-gradient(135deg, rgba(200,149,90,0.06) 0%, transparent 60%);
+      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 48px;
+      align-items: center;
+    }
+    .offer-badge-top {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--gold-warm);
+      background: rgba(200,149,90,0.1);
+      border: 1px solid rgba(200,149,90,0.25);
+      border-radius: 100px;
+      padding: 6px 16px;
+      margin-bottom: 20px;
+    }
+    .offer-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 300;
       color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .offer-sub {
+      font-size: 15px; color: var(--text-secondary);
+      margin-bottom: 28px;
+    }
+    .offer-checklist {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 10px;
+      margin-bottom: 28px;
+    }
+    .offer-checklist li {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 15px; color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .check-icon {
+      flex-shrink: 0; margin-top: 2px;
+      width: 18px; height: 18px;
+      background: rgba(200,149,90,0.15);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold-warm);
+      font-size: 10px;
+    }
+    .offer-after-note {
+      font-size: 13px; color: var(--text-muted);
+      border-top: 1px solid var(--divider);
+      padding-top: 20px;
+      line-height: 1.65;
+    }
+    .offer-cta-block {
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+      min-width: 240px;
+    }
+    .offer-cta-block .btn-primary { width: 100%; text-align: center; }
+    .offer-price-label {
+      font-family: var(--font-display);
+      font-size: 42px; font-weight: 300;
+      color: var(--gold-warm);
       margin-bottom: 4px;
     }
+    .offer-price-note {
+      font-size: 12px; color: var(--text-muted);
+      margin-bottom: 20px;
+      letter-spacing: 0.03em;
+    }
 
-    .benefit-text {
-      font-size: 13px;
-      color: var(--text-secondary);
+    .offer-formats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .format-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 20px;
+      transition: border-color 0.25s, transform 0.3s var(--ease-organic);
+    }
+    .format-card:hover {
+      border-color: var(--border-gold);
+      transform: translateY(-3px);
+    }
+    .format-card.featured {
+      border-color: rgba(200,149,90,0.35);
+      background: rgba(200,149,90,0.04);
+    }
+    .format-tag {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--gold-warm);
+      margin-bottom: 8px;
+    }
+    .format-title {
+      font-size: 14px; font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .format-desc {
+      font-size: 13px; color: var(--text-secondary);
       line-height: 1.55;
     }
 
-    /* ── CTA Section ── */
-    .cta-section {
+    /* ══════════════════════════════════════════════════
+       09 FAQ
+    ══════════════════════════════════════════════════ */
+    .faq-list {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.25s;
+    }
+    .faq-item.open { border-color: var(--border-gold); }
+    .faq-question {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px;
+      cursor: pointer;
+      user-select: none;
+      gap: 16px;
+    }
+    .faq-question-text {
+      font-size: 15px; font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+    .faq-item.open .faq-question-text { color: var(--gold-warm); }
+    .faq-arrow {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      transition: transform 0.3s var(--ease-organic), border-color 0.25s, color 0.25s;
+    }
+    .faq-item.open .faq-arrow {
+      transform: rotate(180deg);
+      border-color: var(--gold-warm);
+      color: var(--gold-warm);
+    }
+    .faq-answer {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.4s var(--ease-organic), padding 0.4s;
+    }
+    .faq-item.open .faq-answer { max-height: 320px; }
+    .faq-answer-inner {
+      padding: 0 24px 22px;
+      font-size: 15px; color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ══════════════════════════════════════════════════
+       10 FINAL CTA
+    ══════════════════════════════════════════════════ */
+    .final-cta {
+      position: relative;
       text-align: center;
-      padding: 80px 0 96px;
+      padding: 100px 0 120px;
+      overflow: hidden;
     }
-
-    .cta-section .section-title {
-      margin-bottom: 12px;
+    .final-glow {
+      position: absolute; inset: 0;
+      pointer-events: none; z-index: 0;
     }
-
-    .cta-section .section-lead {
+    .final-glow::before {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(200,149,90,0.09) 0%, transparent 65%);
+      border-radius: 50%; filter: blur(60px);
+      animation: breathe 8s ease-in-out infinite alternate;
+    }
+    @keyframes breathe {
+      from { transform: translate(-50%,-50%) scale(1); opacity: 0.7; }
+      to   { transform: translate(-50%,-50%) scale(1.15); opacity: 1; }
+    }
+    .final-cta .container { position: relative; z-index: 1; }
+    .final-cta .section-title {
+      font-size: clamp(36px, 6vw, 68px);
+      margin-bottom: 20px;
+    }
+    .final-cta .section-lead {
       margin: 0 auto 40px;
+      text-align: center;
+    }
+    .final-cta-actions {
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+    }
+    .final-cta-or {
+      font-size: 12px; color: var(--text-muted);
+      letter-spacing: 0.06em;
+    }
+    .final-tg-link {
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: flex; align-items: center; gap: 6px;
+      transition: color 0.2s;
+    }
+    .final-tg-link:hover { color: var(--gold-warm); }
+    .tg-icon {
+      width: 18px; height: 18px; color: var(--gold-warm);
     }
 
-    /* ── Footer ── */
+    /* ══════════════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════════════ */
     footer {
       border-top: 1px solid var(--divider);
-      padding: 24px;
+      padding: 24px 28px;
       text-align: center;
       font-size: 12px;
       color: var(--text-muted);
+      letter-spacing: 0.03em;
     }
-
     footer a {
       color: var(--text-muted);
       text-decoration: none;
+      transition: color 0.2s;
     }
-    footer a:hover { color: var(--gold-light); }
+    footer a:hover { color: var(--gold-warm); }
+    .footer-sep { margin: 0 8px; opacity: 0.4; }
 
-    /* ── Misc ── */
+    /* ══════════════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════════════ */
+    @media (max-width: 960px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .hero__photo-wrap { order: -1; max-width: 300px; margin: 0 auto; }
+      .hero__label { margin: 0 auto 28px; }
+      .hero__sub, .hero__quote { max-width: 100%; }
+      .hero__cred { justify-content: center; }
+      .hero__cta { align-items: center; }
+      .trust-grid { grid-template-columns: repeat(2, 1fr); }
+      .trust-item:nth-child(2) { border-right: none; }
+      .trust-item:nth-child(3), .trust-item:nth-child(4) { border-top: 1px solid var(--divider); }
+      .pain-cards { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .split-role { grid-template-columns: 1fr; }
+      .split-col:first-child { border-right: none; border-bottom: 1px solid var(--border-gold); }
+      .about-inner { grid-template-columns: 1fr; }
+      .about__photo { max-width: 220px; aspect-ratio: 1; border-radius: 50%; }
+      .about__text-wrap { padding: 28px; }
+      .result-card { grid-template-columns: 1fr; }
+      .result-arrow { display: none; }
+      .result-after { border-left: none; border-top: 3px solid var(--gold-warm); }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .testimonial-card.hero-t { grid-column: auto; }
+      .offer-main { grid-template-columns: 1fr; gap: 32px; }
+      .offer-formats { grid-template-columns: 1fr; }
+      .nav { display: none; }
+    }
+    @media (max-width: 680px) {
+      section { padding: 64px 0; }
+      .hero { padding: 80px 0 60px; }
+      .container { padding: 0 20px; }
+      .hero__title { font-size: clamp(38px, 10vw, 56px); }
+      .section-title { font-size: clamp(28px, 7vw, 40px); }
+      .trust-grid { grid-template-columns: repeat(2, 1fr); gap: 0; }
+      .offer-main { padding: 28px 24px; }
+    }
+    @media (max-width: 480px) {
+      .btn-primary { padding: 16px 32px; font-size: 13px; }
+    }
+
+    /* ══════════════════════════════════════════════════
+       UTILITIES
+    ══════════════════════════════════════════════════ */
     .text-center { text-align: center; }
-    .mb-8 { margin-bottom: 8px; }
+    .mb-8  { margin-bottom: 8px; }
+    .mb-16 { margin-bottom: 16px; }
     .mb-48 { margin-bottom: 48px; }
+    .section-header { margin-bottom: 48px; }
+    .section-header.centered { text-align: center; }
+    .section-header.centered .section-lead { margin-left: auto; margin-right: auto; }
   </style>
 </head>
 <body>
 
-<!-- ══════════ HERO ══════════ -->
-<section class="hero">
+<!-- Scroll Progress Bar -->
+<div class="scroll-progress" aria-hidden="true"></div>
+
+<!-- Floating Navigation -->
+<nav class="nav" aria-label="Навигация">
+  <a href="#about">Обо мне</a>
+  <div class="nav-dot" aria-hidden="true"></div>
+  <a href="#testimonials">Отзывы</a>
+  <div class="nav-dot" aria-hidden="true"></div>
+  <a href="#offer">Диагностика</a>
+  <div class="nav-dot" aria-hidden="true"></div>
+  <a href="#faq">Вопросы</a>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     01 HERO
+══════════════════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
   <div class="container">
-    <div class="hero__label">Тренажёр · A2–B2 · DACH</div>
+    <div class="hero-inner">
 
-    <h1 class="hero__title">
-      Думать<br><span class="gradient-text">по-немецки</span>
-    </h1>
+      <!-- Text column -->
+      <div class="hero__text">
+        <div class="hero__label reveal">
+          <span class="hero__label-dot" aria-hidden="true"></span>
+          Онлайн&nbsp;·&nbsp;A1–C2&nbsp;·&nbsp;Живу в Германии
+        </div>
 
-    <p class="hero__sub">
-      Переключение мышления без перевода.<br>
-      Быстрее говорите. Меньше пауз. Больше уверенности.
-    </p>
+        <h1 class="hero__title reveal reveal-delay-1">
+          Заговорите<br>
+          <span class="hero__swap-wrap gradient-text">
+            <span class="hero__swap" id="heroSwap">по-немецки</span>
+          </span><br>
+          без паузы
+        </h1>
 
-    <p class="hero__problem">
-      «Я понимаю немецкий, но когда надо говорить — в голове начинается перевод, поиск слов и паузы.»
-    </p>
+        <p class="hero__sub reveal reveal-delay-2">
+          Индивидуальное наставничество&nbsp;+&nbsp;умная система ежедневной&nbsp;практики.
+          Для тех, кто немецкий знает, но в нужный момент теряется.
+        </p>
 
-    <div class="cta-wrap">
-      <a href="https://t.me/mila_konstanz" class="btn-cta">Начать тренировки</a>
-      <a href="https://t.me/mila_konstanz" class="cta-link">@mila_konstanz</a>
+        <blockquote class="hero__quote reveal reveal-delay-2">
+          «Я понимаю немецкий, но когда надо говорить — в голове начинается перевод, поиск слов и паузы.»
+        </blockquote>
+
+        <div class="hero__cred reveal reveal-delay-3">
+          <span>8 лет онлайн</span>
+          <span class="hero__cred-sep">·</span>
+          <span>80+ студентов</span>
+          <span class="hero__cred-sep">·</span>
+          <span>7 стран</span>
+          <span class="hero__cred-sep">·</span>
+          <span>Констанц, Германия</span>
+        </div>
+
+        <div class="hero__cta reveal reveal-delay-3">
+          <a href="https://t.me/mila_konstanz" class="btn-primary"
+             target="_blank" rel="noopener noreferrer"
+             aria-label="Записаться на диагностику — написать Миле в Telegram">
+            Записаться на диагностику
+          </a>
+          <span class="cta-note">Диагностика бесплатна&nbsp;·&nbsp;30 минут&nbsp;·&nbsp;Без обязательств</span>
+        </div>
+      </div>
+
+      <!-- Photo column -->
+      <div class="hero__photo-wrap reveal reveal-delay-2">
+        <div class="hero__photo" role="img" aria-label="Фото наставника Милы — заглушка">
+          <div class="hero__photo-inner">
+            <svg class="photo-silhouette" viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <ellipse cx="60" cy="44" rx="28" ry="30" fill="#C8955A" opacity="0.45"/>
+              <path d="M10 155C10 118 28 104 60 104C92 104 110 118 110 155" fill="#C8955A" opacity="0.35"/>
+              <circle cx="60" cy="44" r="28" stroke="#E8C47A" stroke-width="1" opacity="0.3"/>
+            </svg>
+            <div class="photo-placeholder-label">Фото репетитора</div>
+          </div>
+        </div>
+        <!-- Online indicator -->
+        <div class="hero__photo-badge">
+          <div class="badge-dot" aria-hidden="true"></div>
+          <div>
+            <div class="badge-text">Мила</div>
+            <div class="badge-sub">Онлайн · Констанц, DE</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     02 TRUST BAR
+══════════════════════════════════════════════════ -->
+<div class="trust-bar">
+  <div class="container">
+    <div class="trust-grid">
+      <div class="trust-item reveal">
+        <div class="trust-icon" aria-hidden="true">★</div>
+        <div class="trust-number" data-count="4.9" data-suffix="" id="cnt-rating">4.9</div>
+        <div class="trust-label">средняя оценка<br>студентов</div>
+      </div>
+      <div class="trust-item reveal reveal-delay-1">
+        <div class="trust-icon" aria-hidden="true">👥</div>
+        <div class="trust-number" data-count="80" data-suffix="+" id="cnt-students">80+</div>
+        <div class="trust-label">студентов из России,<br>Украины, Казахстана, Беларуси</div>
+      </div>
+      <div class="trust-item reveal reveal-delay-2">
+        <div class="trust-icon" aria-hidden="true">📅</div>
+        <div class="trust-number" data-count="2019" data-suffix="" id="cnt-year">2019</div>
+        <div class="trust-label">год начала<br>онлайн-преподавания</div>
+      </div>
+      <div class="trust-item reveal reveal-delay-3">
+        <div class="trust-icon" aria-hidden="true">🇩🇪</div>
+        <div class="trust-number" id="cnt-city" style="font-size:22px; padding-top:6px;">Констанц</div>
+        <div class="trust-label">Германия,<br>Бодензее</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- ══════════════════════════════════════════════════
+     03 PAIN
+══════════════════════════════════════════════════ -->
+<section id="pain">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">Узнаёте себя?</span>
+      <h2 class="section-title">Это не вопрос знаний.<br>Это вопрос мышления.</h2>
+    </div>
+
+    <div class="pain-cards">
+      <div class="pain-card reveal reveal-delay-1" style="--i:1">
+        «Понимаю немецкий фильм без субтитров. Но в Behörde отвечаю односложно и хочу провалиться сквозь землю.»
+      </div>
+      <div class="pain-card reveal reveal-delay-2" style="--i:2">
+        «На работе думаю по-русски, перевожу — и пока перевожу, собеседник уже ответил.»
+      </div>
+      <div class="pain-card reveal reveal-delay-3" style="--i:3">
+        «Знаю правило. Но в разговоре всё равно ошибаюсь — потому что нет автоматизма, есть только теория.»
+      </div>
+      <div class="pain-card reveal reveal-delay-4" style="--i:4">
+        «Перед экзаменом Goethe B2 всё остальное кажется простым. Говорение — как будто другой язык.»
+      </div>
+    </div>
+
+    <div class="pain-bridge reveal">
+      Это не вопрос словарного запаса. И не вопрос старания.<br><br>
+      Это вопрос маршрута мышления. Ваш мозг привык думать по-русски
+      и подключать немецкий как переводчик поверх.<br><br>
+      <strong>Когда это меняется — меняется всё.</strong>
     </div>
   </div>
 </section>
 
 <hr class="divider" />
 
-<!-- ══════════ ADVANTAGES ══════════ -->
-<section>
+<!-- ══════════════════════════════════════════════════
+     04 HOW IT WORKS
+══════════════════════════════════════════════════ -->
+<section class="how-section" id="how">
   <div class="container">
-    <div class="text-center mb-48">
-      <p class="section-label">Как работает тренажёр</p>
-      <h2 class="section-title">Три ключевых изменения<br>после первых недель</h2>
+    <div class="section-header reveal">
+      <span class="section-label">Система</span>
+      <h2 class="section-title">Три шага к речи без паузы</h2>
+      <p class="section-lead">
+        Не курс. Не самоучитель. Персональная система, которая работает каждый день — не только во время урока.
+      </p>
     </div>
 
-    <div class="cards-grid">
-
-      <!-- Card 1 -->
-      <div class="card">
-        <svg class="card__icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="20" cy="20" r="19" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.3"/>
-          <path d="M13 20h14M20 13l7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <p class="card__title">Скорость без перевода</p>
-        <p class="card__text">
-          Убирает цепочку «русский → перевод → пауза». Вы отвечаете быстрее и спокойнее уже в обычных диалогах.
+    <div class="steps-grid">
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-number">01</div>
+        <div class="step-tag">Бесплатно · 30 мин</div>
+        <div class="step-title">Диагностическая сессия</div>
+        <p class="step-text">
+          Разбираем ваш уровень, цели и главный блок. Вы получаете конкретную картину: что именно мешает говорить и почему. Это полезно само по себе — даже если вы не продолжите со мной.
         </p>
       </div>
-
-      <!-- Card 2 -->
-      <div class="card">
-        <svg class="card__icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="20" cy="20" r="19" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.3"/>
-          <path d="M14 26c2-4 4-7 6-7s4 3 6 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M20 19V13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <circle cx="20" cy="12" r="1.5" fill="currentColor"/>
-        </svg>
-        <p class="card__title">Немецкие речевые паттерны</p>
-        <p class="card__text">
-          Связки, порядок слов и готовые конструкции «как у местных» — речь становится естественнее, ошибок меньше.
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-number">02</div>
+        <div class="step-tag">Индивидуально</div>
+        <div class="step-title">Персональный план</div>
+        <p class="step-text">
+          На основе диагностики составляем маршрут: какие конструкции отрабатывать, в каком темпе, в каких реальных сценариях из вашей жизни. Никакого универсального учебника.
         </p>
       </div>
-
-      <!-- Card 3 -->
-      <div class="card">
-        <svg class="card__icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="20" cy="20" r="19" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.3"/>
-          <circle cx="20" cy="20" r="7" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M20 17v4l2.5 2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <p class="card__title">Автоматизм за 10–15 минут</p>
-        <p class="card__text">
-          Короткие ежедневные тренировки закрепляют навык. Регулярность даёт устойчивый прогресс для переезда, работы и экзаменов.
+      <div class="step-card reveal reveal-delay-3">
+        <div class="step-number">03</div>
+        <div class="step-tag">Каждый день</div>
+        <div class="step-title">Занятия + ИИ-тренажёр</div>
+        <p class="step-text">
+          Живые сессии с наставником — для стратегии и нюансов. Умные ежедневные тренировки (10–15 мин) — для автоматизма. Прогресс накапливается каждый день, а не раз в неделю.
         </p>
       </div>
+    </div>
 
+    <div class="split-role reveal">
+      <div class="split-col">
+        <div class="split-col-title">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          Наставник делает:
+        </div>
+        <ul class="split-list">
+          <li>Диагностику и персональный план</li>
+          <li>Разбор тонких ошибок и нюансов</li>
+          <li>Стратегию прогресса</li>
+          <li>Культурный и языковой контекст</li>
+          <li>Эмоциональную поддержку и мотивацию</li>
+        </ul>
+      </div>
+      <div class="split-col">
+        <div class="split-col-title">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          ИИ-тренажёр делает:
+        </div>
+        <ul class="split-list">
+          <li>Ежедневные адаптивные упражнения</li>
+          <li>Мгновенную проверку и обратную связь</li>
+          <li>Сотни повторений без усталости</li>
+          <li>24/7 доступность — в любое удобное время</li>
+          <li>Адаптацию под ваш текущий уровень</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
 
 <hr class="divider" />
 
-<!-- ══════════ FOR WHOM ══════════ -->
-<section>
+<!-- ══════════════════════════════════════════════════
+     05 ABOUT
+══════════════════════════════════════════════════ -->
+<section id="about">
   <div class="container">
-    <p class="section-label">Целевая аудитория</p>
-    <h2 class="section-title">Для кого подходит</h2>
-    <p class="section-lead">
-      Тренажёр «Думать по-немецки» — для уровней A2–B2, если у вас одна из этих целей:
-    </p>
+    <div class="about-inner">
 
-    <ul class="audience-list">
-      <li>
-        <svg class="list-icon" viewBox="0 0 20 20" fill="none">
-          <path d="M3 10h14M10 3l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Photo -->
+      <div class="about__photo reveal from-left" role="img" aria-label="Фото наставника Милы — заглушка">
+        <svg width="100" height="130" viewBox="0 0 100 130" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <ellipse cx="50" cy="36" rx="22" ry="24" fill="#C8955A" opacity="0.4"/>
+          <path d="M8 128C8 98 24 84 50 84C76 84 92 98 92 128" fill="#C8955A" opacity="0.3"/>
         </svg>
-        <span><strong>Переезд и интеграция в DACH</strong> — чтобы уверенно общаться в быту: Arzt, школа / Kita, Behörde, жильё, соседи.</span>
-      </li>
-      <li>
-        <svg class="list-icon" viewBox="0 0 20 20" fill="none">
-          <path d="M3 10h14M10 3l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span><strong>Экзамены (Goethe / telc / TestDaF)</strong> — улучшить скорость реакции, связность и уверенность в говорении и письме.</span>
-      </li>
-      <li>
-        <svg class="list-icon" viewBox="0 0 20 20" fill="none">
-          <path d="M3 10h14M10 3l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span><strong>Работа и собеседование</strong> — отвечать чётко, без пауз и «собирать мысль» сразу по-немецки.</span>
-      </li>
-      <li>
-        <svg class="list-icon" viewBox="0 0 20 20" fill="none">
-          <path d="M3 10h14M10 3l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span><strong>Университет и учёба</strong> — корректно формулировать мысли, задавать вопросы, писать e-mail и выступать без ступора.</span>
-      </li>
-      <li>
-        <svg class="list-icon" viewBox="0 0 20 20" fill="none">
-          <path d="M3 10h14M10 3l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span><strong>«Понимаю, но не говорю»</strong> — когда знания есть, но в разговоре включается перевод и торможение.</span>
-      </li>
-    </ul>
-  </div>
-</section>
-
-<hr class="divider" />
-
-<!-- ══════════ WHY BENEFICIAL ══════════ -->
-<section>
-  <div class="container">
-    <p class="section-label">Ценность</p>
-    <h2 class="section-title">Почему это выгодно</h2>
-    <p class="section-lead">
-      Тренажёр не заменяет преподавателя — он дополняет занятия и делает каждую сессию в разы эффективнее.
-    </p>
-
-    <div class="benefits-grid">
-
-      <div class="benefit-item">
-        <svg class="benefit-icon" viewBox="0 0 20 20" fill="none">
-          <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.4"/>
-          <path d="M10 6v5l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <div>
-          <p class="benefit-title">Экономит время</p>
-          <p class="benefit-text">10–15 минут ежедневно дают больше эффекта для речи, чем редкие занятия раз в неделю.</p>
-        </div>
+        <div class="about__photo-label">Фото наставника</div>
       </div>
 
-      <div class="benefit-item">
-        <svg class="benefit-icon" viewBox="0 0 20 20" fill="none">
-          <path d="M4 10c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6z" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.4"/>
-          <path d="M7 10l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <div>
-          <p class="benefit-title">Тренирует главный навык</p>
-          <p class="benefit-text">Говорение — самый сложный навык. Его нельзя «прочитать», его надо натренировать.</p>
-        </div>
-      </div>
+      <!-- Text -->
+      <div class="about__text-wrap reveal from-right">
+        <span class="section-label">О наставнике</span>
+        <h2 class="section-title" style="margin-bottom:24px;">Почему я это делаю</h2>
 
-      <div class="benefit-item">
-        <svg class="benefit-icon" viewBox="0 0 20 20" fill="none">
-          <path d="M10 3c-4 0-7 3.1-7 7s3 7 7 7 7-3.1 7-7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.4" stroke-linecap="round"/>
-          <path d="M14 3l2 2-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <div>
-          <p class="benefit-title">Снижает стресс и ошибки</p>
-          <p class="benefit-text">Когда исчезает перевод в голове, уходит страх, речь становится ровнее, ошибок меньше.</p>
+        <div class="about__story">
+          <p>
+            Меня зовут <strong>Мила</strong>. Я живу в Констанце — это на границе Германии и Швейцарии, у Бодензее — с 2017 года.
+          </p>
+          <p>
+            Когда я сама оказалась в Германии, у меня был хороший немецкий по бумагам. Но первые месяцы я почти не разговаривала с соседями. Не потому что не знала слов — потому что мозг работал по-русски, а немецкий включался как переводчик поверх. Это было мучительно.
+          </p>
+          <p>
+            Потом я начала замечать момент, когда что-то менялось: немецкое слово приходило раньше русского. Я начала думать ситуациями, а не словами. Стало легче.
+          </p>
+          <p>
+            С тех пор я работаю только над этим переключением — не над грамматикой ради грамматики, а над тем, чтобы немецкий стал <strong>своим. Живым. Рабочим.</strong>
+          </p>
+          <p>
+            За 8 лет я помогла 80+ студентам из России, Украины, Казахстана, Беларуси заговорить так, как им нужно в реальной жизни здесь, в DACH.
+          </p>
         </div>
-      </div>
 
-      <div class="benefit-item">
-        <svg class="benefit-icon" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="5" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.4"/>
-          <path d="M7 10h6M10 7v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <div>
-          <p class="benefit-title">Быстрый прикладной результат</p>
-          <p class="benefit-text">Реальные сценарии: жизнь, работа, учёба. Вы тренируете то, что встречается уже сейчас.</p>
-        </div>
-      </div>
+        <div class="about__sig">— Мила</div>
 
-      <div class="benefit-item" style="grid-column: span 2;">
-        <svg class="benefit-icon" viewBox="0 0 20 20" fill="none">
-          <circle cx="7" cy="10" r="4" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.4"/>
-          <circle cx="13" cy="10" r="4" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.4"/>
-          <path d="M10 7.3v5.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <div>
-          <p class="benefit-title">Отдельно или с преподавателем</p>
-          <p class="benefit-text">Самостоятельно — для ежедневной практики. С наставником — для ускорения и точечной коррекции. Два формата, один результат.</p>
+        <div class="about__badges">
+          <span class="badge"><span class="badge-icon">🇩🇪</span> Konstanz, Deutschland</span>
+          <span class="badge"><span class="badge-icon">📅</span> С 2019 онлайн</span>
+          <span class="badge"><span class="badge-icon">👥</span> 80+ студентов</span>
+          <span class="badge"><span class="badge-icon">🌍</span> 7 стран</span>
+          <span class="badge"><span class="badge-icon">🎓</span> A1–C2</span>
         </div>
       </div>
 
@@ -542,28 +1341,570 @@
 
 <hr class="divider" />
 
-<!-- ══════════ CTA SECTION ══════════ -->
-<section class="cta-section">
+<!-- ══════════════════════════════════════════════════
+     06 RESULTS
+══════════════════════════════════════════════════ -->
+<section class="results-section" id="results">
   <div class="container">
-    <p class="section-label">Следующий шаг</p>
-    <h2 class="section-title">
-      Готовы говорить<br><span class="gradient-text">без паузы на перевод?</span>
-    </h2>
-    <p class="section-lead">
-      Напишите — разберём вашу ситуацию и подберём формат тренировок под ваши цели.
-    </p>
-    <div class="cta-wrap">
-      <a href="https://t.me/mila_konstanz" class="btn-cta">Написать и начать</a>
-      <a href="https://t.me/mila_konstanz" class="cta-link">Telegram · @mila_konstanz</a>
+    <div class="section-header reveal">
+      <span class="section-label">Твёрдые результаты</span>
+      <h2 class="section-title">Что происходит, когда<br>мышление переключается</h2>
+      <p class="section-lead">
+        Это не «улучшите немецкий». Это конкретные изменения в конкретных жизнях.
+      </p>
+    </div>
+
+    <div class="results-grid">
+
+      <div class="result-card reveal">
+        <div class="result-before">
+          <div class="result-tag">До</div>
+          <p class="result-text">«B1, понимала всё, но на собеседовании терялась и отвечала односложно»</p>
+        </div>
+        <div class="result-arrow" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M5 10h10M11 6l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="result-after">
+          <div class="result-tag">После · 4 месяца</div>
+          <p class="result-text">«Прошла Vorstellungsgespräch в немецкой компании. Получила работу.»</p>
+          <div class="result-attr">— Анна К., Харьков → Мюнхен</div>
+        </div>
+      </div>
+
+      <div class="result-card reveal reveal-delay-1">
+        <div class="result-before">
+          <div class="result-tag">До</div>
+          <p class="result-text">«Два года курсов, уровень B2 по документам. На работе молчал на немецких митингах.»</p>
+        </div>
+        <div class="result-arrow" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M5 10h10M11 6l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="result-after">
+          <div class="result-tag">После · 3 месяца</div>
+          <p class="result-text">«Начал выступать с комментариями. Коллеги перестали переходить на английский.»</p>
+          <div class="result-attr">— Дмитрий Р., Москва → Берлин</div>
+        </div>
+      </div>
+
+      <div class="result-card reveal reveal-delay-2">
+        <div class="result-before">
+          <div class="result-tag">До</div>
+          <p class="result-text">«Провалил TestDaF дважды. Говорение — 2 балла из 5.»</p>
+        </div>
+        <div class="result-arrow" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M5 10h10M11 6l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="result-after">
+          <div class="result-tag">После · 5 месяцев</div>
+          <p class="result-text">«Сдал с первого раза. Говорение — 4 из 5.»</p>
+          <div class="result-attr">— Айгуль С., Алматы → Вена</div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
+<hr class="divider" />
+
+<!-- ══════════════════════════════════════════════════
+     07 TESTIMONIALS
+══════════════════════════════════════════════════ -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">Студенты</span>
+      <h2 class="section-title">Они уже прошли этот путь</h2>
+    </div>
+
+    <div class="testimonials-grid">
+
+      <!-- Hero testimonial -->
+      <div class="testimonial-card hero-t reveal">
+        <span class="t-quote-mark" aria-hidden="true">"</span>
+        <p class="t-text">
+          Когда я пришла к Миле, я занималась немецким уже два года, но на собеседовании терялась и отвечала односложно. Через три месяца я прошла Vorstellungsgespräch и получила работу в немецкой компании в Штутгарте. Мила не просто объясняет — она как-то умеет найти именно то место, где у тебя застряло.
+        </p>
+        <div class="t-footer">
+          <div class="t-avatar" aria-hidden="true">К</div>
+          <div>
+            <div class="t-name">Катя Р.</div>
+            <div class="t-meta">Харьков → Штутгарт · уровень B1 при старте</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card reveal reveal-delay-1">
+        <span class="t-quote-mark" aria-hidden="true">"</span>
+        <p class="t-text">
+          Честно говоря, я не очень верила в онлайн-занятия — думала, что без офлайна не то. Но с Милой это работало лучше, чем с преподавателем, с которым я два года ходила на курсы в Москве. Наверное, потому что она каждый раз адаптировалась к тому, что нужно именно мне.
+        </p>
+        <div class="t-footer">
+          <div class="t-avatar" aria-hidden="true">Л</div>
+          <div>
+            <div class="t-name">Лена С.</div>
+            <div class="t-meta">Москва · B2 → C1</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card reveal reveal-delay-2">
+        <span class="t-quote-mark" aria-hidden="true">"</span>
+        <p class="t-text">
+          Я шла учить немецкий для экзамена. Получила гораздо больше. На прошлой неделе объяснялась с сантехником — и он не понял, что я иностранка.
+        </p>
+        <div class="t-footer">
+          <div class="t-avatar" aria-hidden="true">М</div>
+          <div>
+            <div class="t-name">Маша П.</div>
+            <div class="t-meta">Алматы → Вена</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card reveal reveal-delay-1">
+        <span class="t-quote-mark" aria-hidden="true">"</span>
+        <p class="t-text">
+          Тренажёр между занятиями — это то, что изменило всё. Я наконец начала заниматься каждый день. Не из дисциплины, а потому что упражнения реально работают и я вижу прогресс.
+        </p>
+        <div class="t-footer">
+          <div class="t-avatar" aria-hidden="true">О</div>
+          <div>
+            <div class="t-name">Ольга М.</div>
+            <div class="t-meta">Екатеринбург → Берлин · B1 → B2 за 4 мес.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ══════════════════════════════════════════════════
+     08 OFFER
+══════════════════════════════════════════════════ -->
+<section class="offer-section" id="offer">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">Начать</span>
+      <h2 class="section-title">Диагностическая сессия</h2>
+    </div>
+
+    <div class="offer-main reveal scale-in">
+      <div>
+        <div class="offer-badge-top">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M7 4v4l2.5 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          Бесплатно · 30 минут · Онлайн
+        </div>
+        <h3 class="offer-title">Что происходит<br>на сессии:</h3>
+        <ul class="offer-checklist">
+          <li>
+            <span class="check-icon" aria-hidden="true">✓</span>
+            Разбираем ваш реальный уровень — не по документам
+          </li>
+          <li>
+            <span class="check-icon" aria-hidden="true">✓</span>
+            Выясняем, что именно мешает говорить
+          </li>
+          <li>
+            <span class="check-icon" aria-hidden="true">✓</span>
+            Определяем цель и реалистичные сроки
+          </li>
+          <li>
+            <span class="check-icon" aria-hidden="true">✓</span>
+            Вы получаете конкретный план — что делать дальше
+          </li>
+        </ul>
+        <div class="offer-after-note">
+          После сессии вы точно знаете, что вам нужно. Вы можете работать со мной или самостоятельно — <strong style="color:var(--text-secondary)">никаких обязательств.</strong>
+        </div>
+      </div>
+
+      <div class="offer-cta-block">
+        <div class="offer-price-label">0€</div>
+        <div class="offer-price-note">диагностическая сессия</div>
+        <a href="https://t.me/mila_konstanz" class="btn-primary"
+           target="_blank" rel="noopener noreferrer"
+           aria-label="Записаться на диагностику в Telegram"
+           style="width:100%; text-align:center; display:block;">
+          Записаться
+        </a>
+        <span class="cta-note" style="text-align:center;">
+          Отвечаю в Telegram<br>в течение нескольких часов
+        </span>
+      </div>
+    </div>
+
+    <div class="offer-formats">
+      <div class="format-card featured reveal reveal-delay-1">
+        <div class="format-tag">Старт</div>
+        <div class="format-title">Диагностика</div>
+        <p class="format-desc">Разовая бесплатная сессия 30 мин. Картина ситуации и конкретный план.</p>
+      </div>
+      <div class="format-card reveal reveal-delay-2">
+        <div class="format-tag">Основной формат</div>
+        <div class="format-title">Индивидуальные занятия</div>
+        <p class="format-desc">С наставником + ИИ-тренажёр между сессиями. Стоимость по запросу.</p>
+      </div>
+      <div class="format-card reveal reveal-delay-3">
+        <div class="format-tag">Целевой курс</div>
+        <div class="format-title">Интенсив</div>
+        <p class="format-desc">Ускоренная программа под конкретную цель: экзамен, переезд, работа.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ══════════════════════════════════════════════════
+     09 FAQ
+══════════════════════════════════════════════════ -->
+<section id="faq">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">Вопросы</span>
+      <h2 class="section-title">Частые вопросы</h2>
+    </div>
+
+    <div class="faq-list reveal">
+
+      <div class="faq-item open">
+        <button class="faq-question" aria-expanded="true">
+          <span class="faq-question-text">Это только для определённых уровней?</span>
+          <span class="faq-arrow" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Работаю с уровнями от A1 до C2. Диагностика покажет, где именно вы сейчас и что нужно конкретно вам. Большинство моих студентов приходят с A2–B2, но если у вас другой уровень — напишите, разберёмся.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          <span class="faq-question-text">Онлайн так же эффективно, как офлайн?</span>
+          <span class="faq-arrow" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Для работы над речью и мышлением — да, эффективнее. Никаких потерь времени на дорогу, удобный формат, видеосвязь полностью передаёт интонацию и реакцию. Мои студенты из 7 стран работают онлайн годами и получают конкретные результаты.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          <span class="faq-question-text">Что такое ИИ-тренажёр? Это вместо вас?</span>
+          <span class="faq-arrow" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Нет. ИИ-тренажёр — это инструмент в моих руках, как тренажёрный зал у спортсмена. Он делает ежедневную практику возможной между нашими сессиями. Я настраиваю упражнения, вижу ваш прогресс и корректирую маршрут. Тренажёр не ведёт вас — веду я.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          <span class="faq-question-text">Как быстро будет результат?</span>
+          <span class="faq-arrow" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Первые изменения — паузы становятся короче, отдельные фразы «сами выходят» — студенты замечают через 2–4 недели регулярной практики. Устойчивый результат в речи — 2–4 месяца. Зависит от цели, уровня и регулярности.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          <span class="faq-question-text">Что если метод мне не подойдёт?</span>
+          <span class="faq-arrow" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Именно для этого — диагностическая сессия. Мы сначала разбираемся, подходит ли мой подход вашей ситуации. Я не работаю со всеми подряд — только с теми, кому реально смогу помочь.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          <span class="faq-question-text">Сколько стоят занятия?</span>
+          <span class="faq-arrow" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Стоимость зависит от формата и частоты занятий. Обсуждаем индивидуально после диагностики, исходя из ваших целей и ситуации. Диагностическая сессия — бесплатна.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ══════════════════════════════════════════════════
+     10 FINAL CTA
+══════════════════════════════════════════════════ -->
+<section class="final-cta" id="contact">
+  <div class="final-glow" aria-hidden="true"></div>
+  <div class="container">
+    <div class="reveal">
+      <span class="section-label" style="display:block; margin-bottom:20px;">Следующий шаг</span>
+      <h2 class="section-title" style="font-size:clamp(38px,6vw,68px); margin-bottom:20px;">
+        Немецкий, который<br>
+        <span class="gradient-text">работает в реальной жизни</span>
+      </h2>
+      <p class="section-lead" style="text-align:center; margin:0 auto 44px;">
+        Вы уже знаете, что вам это нужно.<br>Следующий шаг — просто написать.
+      </p>
+    </div>
+
+    <div class="final-cta-actions reveal reveal-delay-1">
+      <a href="https://t.me/mila_konstanz" class="btn-primary"
+         target="_blank" rel="noopener noreferrer"
+         aria-label="Записаться на бесплатную диагностику в Telegram"
+         style="font-size:15px; padding:20px 52px;">
+        Записаться на бесплатную диагностику
+      </a>
+      <span class="cta-note">Без обязательств · Отвечаю в течение нескольких часов</span>
+      <div class="final-cta-or">или</div>
+      <a href="https://t.me/mila_konstanz" class="final-tg-link"
+         target="_blank" rel="noopener noreferrer">
+        <svg class="tg-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M21.8 2.4L2.3 9.8c-1.3.5-1.3 1.3-.2 1.6l4.9 1.5 11.3-7.1c.5-.3 1 0 .6.4L8.3 15.6v1.9l2.7-2.5 5.3 3.9c1 .5 1.7.3 1.9-.9l3.4-15c.3-1.5-.6-2.1-1.8-1.6z" fill="currentColor"/>
+        </svg>
+        просто напишите в Telegram — познакомимся
+      </a>
+      <a href="https://t.me/mila_konstanz" class="cta-link"
+         target="_blank" rel="noopener noreferrer">@mila_konstanz</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     11 FOOTER
+══════════════════════════════════════════════════ -->
 <footer>
-  <p>Тренажёр «Думать по-немецки» &nbsp;·&nbsp;
-    <a href="https://t.me/mila_konstanz">@mila_konstanz</a>
-  </p>
+  <div class="container">
+    <p>
+      Тренажёр «Думать по-немецки»
+      <span class="footer-sep">·</span>
+      Мила
+      <span class="footer-sep">·</span>
+      Констанц, Германия
+      <span class="footer-sep">·</span>
+      <a href="https://t.me/mila_konstanz" target="_blank" rel="noopener noreferrer">@mila_konstanz</a>
+      <span class="footer-sep">·</span>
+      <a href="#">Политика конфиденциальности</a>
+      <span class="footer-sep">·</span>
+      © 2026
+    </p>
+  </div>
 </footer>
+
+
+<script>
+(function() {
+  'use strict';
+
+  /* ──────────────────────────────────────────
+     SCROLL PROGRESS BAR
+  ────────────────────────────────────────── */
+  const progressBar = document.querySelector('.scroll-progress');
+  function updateProgress() {
+    const scrolled = window.scrollY;
+    const max = document.body.scrollHeight - window.innerHeight;
+    if (max > 0) progressBar.style.width = (scrolled / max * 100) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+
+  /* ──────────────────────────────────────────
+     FLOATING NAV
+  ────────────────────────────────────────── */
+  const nav = document.querySelector('.nav');
+  const heroEl = document.getElementById('hero');
+  function updateNav() {
+    const heroBottom = heroEl ? heroEl.getBoundingClientRect().bottom : 0;
+    nav.classList.toggle('visible', heroBottom < 0);
+  }
+  window.addEventListener('scroll', updateNav, { passive: true });
+
+  /* ──────────────────────────────────────────
+     SCROLL REVEAL (IntersectionObserver)
+  ────────────────────────────────────────── */
+  const revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+  );
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  /* ──────────────────────────────────────────
+     COUNT-UP ANIMATION (Trust Bar)
+  ────────────────────────────────────────── */
+  function animateCount(el, target, suffix, duration) {
+    const isDecimal = target % 1 !== 0;
+    const start = performance.now();
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const value = isDecimal
+        ? (ease * target).toFixed(1)
+        : Math.floor(ease * target);
+      el.textContent = value + (suffix || '');
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  const countEls = [
+    { id: 'cnt-rating',   target: 4.9, suffix: '' },
+    { id: 'cnt-students', target: 80,  suffix: '+' },
+    { id: 'cnt-year',     target: 2019, suffix: '' },
+  ];
+
+  const countObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const data = countEls.find(d => d.id === el.id);
+          if (data) animateCount(el, data.target, data.suffix, 1400);
+          countObserver.unobserve(el);
+        }
+      });
+    },
+    { threshold: 0.5 }
+  );
+  countEls.forEach(d => {
+    const el = document.getElementById(d.id);
+    if (el) countObserver.observe(el);
+  });
+
+  /* ──────────────────────────────────────────
+     WORD SWAP IN HERO
+  ────────────────────────────────────────── */
+  const swapEl = document.getElementById('heroSwap');
+  if (swapEl) {
+    const words = ['по-немецки', 'без паузы', 'уверенно', 'наконец'];
+    let idx = 0;
+    function swapWord() {
+      swapEl.style.opacity = '0';
+      swapEl.style.transform = 'translateY(8px)';
+      setTimeout(() => {
+        idx = (idx + 1) % words.length;
+        swapEl.textContent = words[idx];
+        swapEl.style.opacity = '1';
+        swapEl.style.transform = 'translateY(0)';
+      }, 320);
+    }
+    swapEl.style.transition = 'opacity 0.32s ease, transform 0.32s ease';
+    setInterval(swapWord, 2800);
+  }
+
+  /* ──────────────────────────────────────────
+     FAQ ACCORDION
+  ────────────────────────────────────────── */
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+
+      // Close all
+      document.querySelectorAll('.faq-item.open').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+      });
+
+      // Open clicked (if wasn't open)
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  /* ──────────────────────────────────────────
+     SMOOTH ANCHOR SCROLL FOR NAV
+  ────────────────────────────────────────── */
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', (e) => {
+      const target = document.querySelector(anchor.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  /* ──────────────────────────────────────────
+     MAGNETIC CTA BUTTON (Desktop only)
+  ────────────────────────────────────────── */
+  if (window.matchMedia('(hover: hover)').matches) {
+    document.querySelectorAll('.btn-primary').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = (e.clientX - cx) * 0.18;
+        const dy = (e.clientY - cy) * 0.18;
+        btn.style.transform = `translateY(-3px) translate(${dx}px, ${dy}px)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = '';
+      });
+    });
+  }
+
+})();
+</script>
 
 </body>
 </html>
