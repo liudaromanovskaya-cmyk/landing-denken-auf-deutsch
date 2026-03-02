@@ -159,9 +159,15 @@
       margin-bottom: 48px;
     }
     .gradient-text {
-      background: linear-gradient(135deg, var(--gold-warm) 0%, var(--gold-bright) 50%, var(--gold-warm) 100%);
+      background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-warm) 20%, var(--gold-bright) 50%, var(--gold-warm) 80%, var(--gold-dark) 100%);
+      background-size: 300% 100%;
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
+      animation: gradient-flow 5s linear infinite;
+    }
+    @keyframes gradient-flow {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
     }
 
     /* ══════════════════════════════════════════════════
@@ -492,8 +498,8 @@
     }
     .step-card:hover {
       border-color: var(--border-gold);
-      transform: translateY(-4px);
-      box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+      transform: translateY(-6px);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3), 0 0 0 1px rgba(200,149,90,0.18), inset 0 1px 0 rgba(200,149,90,0.1);
     }
     .step-number {
       font-family: var(--font-display);
@@ -590,6 +596,11 @@
       display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 14px;
       padding: 28px;
+      animation: float-subtle 7s ease-in-out infinite alternate;
+    }
+    @keyframes float-subtle {
+      from { transform: translateY(0px); box-shadow: 0 20px 60px rgba(0,0,0,0.35); }
+      to   { transform: translateY(-10px); box-shadow: 0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(200,149,90,0.12); }
     }
     .about__photo svg { opacity: 0.3; }
     .about__photo-label {
@@ -760,6 +771,22 @@
       grid-template-columns: 1fr auto;
       gap: 48px;
       align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .offer-main::after {
+      content: '';
+      position: absolute; top: 0; left: -120%;
+      width: 55%; height: 100%;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+      transform: skewX(-15deg);
+      animation: shimmer-pass 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes shimmer-pass {
+      0%   { left: -120%; }
+      40%  { left: 150%; }
+      100% { left: 150%; }
     }
     .offer-badge-top {
       display: inline-flex; align-items: center; gap: 10px;
@@ -1042,9 +1069,58 @@
     .section-header { margin-bottom: 48px; }
     .section-header.centered { text-align: center; }
     .section-header.centered .section-lead { margin-left: auto; margin-right: auto; }
+
+    /* ══════════════════════════════════════════════════
+       CURSOR GLOW (Desktop premium feel)
+    ══════════════════════════════════════════════════ */
+    #cursor-glow {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9996;
+      background: radial-gradient(600px circle at var(--cx, -999px) var(--cy, -999px), rgba(200,149,90,0.05), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.6s;
+    }
+    #cursor-glow.visible { opacity: 1; }
+
+    /* ══════════════════════════════════════════════════
+       ENHANCED HOVER STATES
+    ══════════════════════════════════════════════════ */
+    .testimonial-card {
+      transition: border-color 0.25s, background 0.25s, transform 0.35s var(--ease-organic), box-shadow 0.35s;
+    }
+    .testimonial-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 56px rgba(0,0,0,0.24), 0 0 0 1px rgba(200,149,90,0.14);
+    }
+    .result-card {
+      transition: border-color 0.3s, transform 0.35s var(--ease-organic), box-shadow 0.35s;
+    }
+    .result-card:hover {
+      border-color: var(--border-gold);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.22);
+    }
+    .trust-item {
+      transition: transform 0.3s var(--ease-organic);
+      cursor: default;
+    }
+    .trust-item:hover { transform: translateY(-3px); }
+    .nav a.active {
+      color: var(--gold-warm);
+      background: rgba(200,149,90,0.1);
+    }
+    .pain-card {
+      transition: border-color 0.25s, background 0.25s, transform 0.3s var(--ease-organic);
+    }
+    .pain-card:hover {
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body>
+
+<!-- Cursor glow overlay -->
+<div id="cursor-glow" aria-hidden="true"></div>
 
 <!-- Scroll Progress Bar -->
 <div class="scroll-progress" aria-hidden="true"></div>
@@ -1746,6 +1822,63 @@
 <script>
 (function() {
   'use strict';
+
+  /* ──────────────────────────────────────────
+     CURSOR GLOW (Desktop only)
+  ────────────────────────────────────────── */
+  const cursorGlow = document.getElementById('cursor-glow');
+  if (cursorGlow && window.matchMedia('(hover: hover)').matches) {
+    document.addEventListener('mousemove', (e) => {
+      document.documentElement.style.setProperty('--cx', e.clientX + 'px');
+      document.documentElement.style.setProperty('--cy', e.clientY + 'px');
+      cursorGlow.classList.add('visible');
+    }, { passive: true });
+    document.addEventListener('mouseleave', () => cursorGlow.classList.remove('visible'));
+  }
+
+  /* ──────────────────────────────────────────
+     HERO PARALLAX (glow layer)
+  ────────────────────────────────────────── */
+  const heroGlowEl = document.querySelector('.hero-glow');
+  function updateParallax() {
+    const sy = window.scrollY;
+    if (heroGlowEl) heroGlowEl.style.transform = `translateY(${sy * 0.08}px)`;
+  }
+  window.addEventListener('scroll', updateParallax, { passive: true });
+
+  /* ──────────────────────────────────────────
+     CARD 3D TILT (Desktop only)
+  ────────────────────────────────────────── */
+  if (window.matchMedia('(hover: hover)').matches) {
+    document.querySelectorAll('.step-card, .format-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const dx = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+        const dy = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+        card.style.transform = `translateY(-6px) perspective(900px) rotateX(${-dy * 5}deg) rotateY(${dx * 5}deg)`;
+      });
+      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+    });
+  }
+
+  /* ──────────────────────────────────────────
+     ACTIVE SECTION IN NAV
+  ────────────────────────────────────────── */
+  const navAnchors = document.querySelectorAll('.nav a');
+  const trackedIds = ['about', 'testimonials', 'offer', 'faq'];
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navAnchors.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+  trackedIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) sectionObserver.observe(el);
+  });
 
   /* ──────────────────────────────────────────
      SCROLL PROGRESS BAR
