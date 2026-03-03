@@ -7,6 +7,10 @@
   <meta name="description" content="Онлайн-наставник по немецкому языку. Индивидуальный подход + AI-практика. Перестать переводить — начать думать по-немецки. Бесплатная диагностика 30 мин." />
   <meta property="og:title" content="Думать по-немецки · Наставник Мила" />
   <meta property="og:description" content="Индивидуальное наставничество + умная AI-практика. Для русскоязычных в DACH. A1–C2." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇩🇪</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -2042,7 +2046,7 @@
 <!-- ══════════════════════════════════════════════════
      10 FINAL CTA
 ══════════════════════════════════════════════════ -->
-<section class="final-cta" id="contact">
+<section class="final-cta" id="final-cta">
   <div class="final-glow" aria-hidden="true"></div>
   <div class="container">
     <div class="reveal">
@@ -2350,7 +2354,9 @@
   ────────────────────────────────────────── */
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', (e) => {
-      const target = document.querySelector(anchor.getAttribute('href'));
+      const href = anchor.getAttribute('href');
+      if (!href || href === '#') return;
+      const target = document.querySelector(href);
       if (target) {
         e.preventDefault();
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
